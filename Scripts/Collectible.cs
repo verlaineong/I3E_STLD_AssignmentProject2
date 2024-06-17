@@ -1,12 +1,11 @@
 /*
  * Author: Verlaine Ong
- * Date: 26/5/2024
+ * Date: 17/6/2024
  * Description: 
  * The Collectible will destroy itself after being collided with.
  */
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Build.Content;
 using UnityEngine;
 
 public class Collectible : Interactable  //everything u type inside the interactable script can use inside this script
@@ -16,20 +15,16 @@ public class Collectible : Interactable  //everything u type inside the interact
     /// </summary>
     public static int myScore = 1;
 
-
     public Canvas itemImage;
+   
 
     public static bool hasCrystal = false;
     public static bool hasMaterial = false;
     public static bool hasEngine = false;
 
-
-
     /// <summary>
     /// Performs actions related to collection of the collectible
     /// </summary>
-    /// 
-
     void Start()
     {
         itemImage.gameObject.SetActive(false);
@@ -58,58 +53,54 @@ public class Collectible : Interactable  //everything u type inside the interact
         Destroy(gameObject);
     }
 
-
     /// <summary>
     /// Callback function for when a collision occurs
     /// </summary>
     /// <param name="collision">Collision event data</param>
     private void OnCollisionEnter(Collision collision)
     {
-        // Check if the object that
-        // touched me has a 'Player' tag
+        // Check if the object that touched me has a 'Player' tag
         if (collision.gameObject.tag == "Player")
-
         {
-            //look for player component on object that that collide with me
+            // Look for player component on object that collided with me
             currentPlayer = collision.gameObject.GetComponent<Player>();
-            //update the player that i'm a current collectible
+            // Update the player that I'm a current collectible
             UpdatePlayerInteractable(currentPlayer);
         }
     }
+
     /// <summary>
     /// Callback function for when a collision stopped
     /// </summary>
     /// <param name="collision">Collision event data</param>
     private void OnCollisionExit(Collision collision)
     {
-        // Check if the object that
-        // stopped touching me has a 'Player' tag
+        // Check if the object that stopped touching me has a 'Player' tag
         if (collision.gameObject.tag == "Player")
         {
-            //look for player component on object that that collide with me
+            // Remove player component on object that collided with me
             RemovePlayerInteractable(currentPlayer);
-            //update the player that there s no current collectible.
+            // Update the player that there is no current collectible.
             currentPlayer = null;
         }
     }
+
     /// <summary>
-    /// Handles the collectibles interaction.
-    /// Increase the player's score and destroy itself
+    /// Handles the collectible's interaction.
+    /// Increases the player's score and destroys itself
     /// </summary>
     /// <param name="thePlayer">The player that interacted with the object.</param>
     public override void Interact(Player thePlayer)
     {
         base.Interact(thePlayer);
         GameManager.Instance.IncreaseScore(myScore);
-        // thePlayer.IncreaseScore(myScore);
-        ActivateEnhancements(thePlayer); //call this to enchance
+        ActivateEnhancements(thePlayer); // Call this to enhance
         Collected();
     }
 
     /// <summary>
     /// Activates enhancements on the player.
     /// </summary>
-    /// 
     private void ActivateEnhancements(Player thePlayer)
     {
         Enhancement enhancement = thePlayer.GetComponent<Enhancement>();

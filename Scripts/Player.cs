@@ -1,6 +1,6 @@
 /*
  * Author: Verlaine Ong
- * Date: 26/5/2024
+ * Date: 
  * Description: 
  * Contains functions related to the Player such as increasing score.
  */
@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -15,6 +16,11 @@ public class Player : MonoBehaviour
     /// The UI text that stores the player score
     /// </summary>
     public TextMeshProUGUI scoreText;
+
+    public HealthBar mHealthBar;
+    public Canvas Hud;
+    public GameObject gameOverPanel;
+
 
     /// <summary>
     /// The current score of the player
@@ -32,6 +38,62 @@ public class Player : MonoBehaviour
     [SerializeField]
     float interactionDistance;
 
+
+    private Rigidbody rb; // Reference to Rigidbody component
+
+
+    private void Start()
+    {
+       
+        gameOverPanel.gameObject.SetActive(false);
+        mHealthBar = Hud.transform.Find("HealthBar").GetComponent<HealthBar>();
+        mHealthBar.Min = 0;
+        mHealthBar.Max = Health;
+        
+        
+    }
+
+
+    public int Health = 100;
+
+    public void TakeDamage(int amount)
+    {
+        Health -= amount;
+        if (Health < 0)
+        {
+            Health = 0;
+        }
+
+        if (mHealthBar != null)
+        {
+            mHealthBar.SetHealth(Health);
+        }
+
+        if (Health == 0)
+        {
+            Die();
+
+        }
+
+    }
+    public void Die()
+    {
+        // Rotate the player capsule 90 degrees forward
+        transform.Rotate(Vector3.forward * 90);
+
+        // Start the coroutine to wait and load the scene
+        StartCoroutine(WaitAndLoadScene());
+    }
+
+    private IEnumerator WaitAndLoadScene()
+    {
+        // Wait for 3 seconds 
+        yield return new WaitForSeconds(3f);
+
+        // Load the next scene
+        SceneManager.LoadSceneAsync(3);
+    }
+
     private void Update()
     {
         Debug.DrawLine(playerCamera.position, playerCamera.position + (playerCamera.forward * interactionDistance), Color.red);
@@ -43,8 +105,13 @@ public class Player : MonoBehaviour
         }
     }
 
-    private Door currentDoor;
-    private Collectible currentCollectible;
+
+
+
+
+ 
+    Door currentDoor;
+    Collectible currentCollectible;
 
 
     /// <summary>
@@ -94,11 +161,21 @@ public class Player : MonoBehaviour
     /// </summary>
     void OnInteract()
     {
-        // Check if the current Interactable is null
+        // Check if there is a current interactable
         if (currentInteractable != null)
         {
-            // Interact with the object
+            // Interact with the current interactable
             currentInteractable.Interact(this);
         }
+
+        // Check if there is a current door
+        if (currentDoor != null)
+        {
+            // Open the door
+            currentDoor.OpenDoor();
+        }
     }
+
+
+
 }

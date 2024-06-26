@@ -1,6 +1,6 @@
 /*
- * Author: Verlaine Ong
- * Date: 26/5/2024
+ * Author: 
+ * Date: 06/05/2024
  * Description: 
  * The door that opens when the player is near it and presses the interact button.
  */
@@ -8,8 +8,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Door : Interactable
+public class Door : MonoBehaviour
 {
+    [SerializeField]
+    Transform doorHinge;
+
     /// <summary>
     /// Flags if the door is open
     /// </summary>
@@ -19,43 +22,25 @@ public class Door : Interactable
     /// Flags if the door is locked
     /// </summary>
     bool locked = false;
+
     private void OnTriggerEnter(Collider other)
     {
-        // Check if the obejct entering the trigger has the "Player" tag
-        if(currentPlayer.tag == "Player")
+        // Check if the object entering the trigger has the "Player" tag
+        if (other.gameObject.tag == "Player" && !opened)
         {
-            // Store the current player
-            currentPlayer = other.gameObject.GetComponent<Player>();
-
-            // Update the player interactable to be this door.
-            UpdatePlayerInteractable(currentPlayer);
+            // If it is the player, update the player which door it's in front of
+            other.gameObject.GetComponent<Player>().UpdateDoor(this);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        // Check if the obejct exiting the trigger has the "Player" tag
-        if (currentPlayer.tag == "Player")
+        // Check if the object exiting the trigger has the "Player" tag
+        if (other.gameObject.tag == "Player")
         {
-            // Remove the player Interactable
-            RemovePlayerInteractable(currentPlayer);
-
-            // Set the current Player to null
-            currentPlayer = null;
+            // If it is the player, update the player that there is no door
+            other.gameObject.GetComponent<Player>().UpdateDoor(null);
         }
-    }
-
-    /// <summary>
-    /// Handles the door's interaction
-    /// </summary>
-    /// <param name="thePlayer">The player that interacted with the door</param>
-    public override void Interact(Player thePlayer)
-    {
-        // Call the Interact function from the base Interactable class.
-        base.Interact(thePlayer);
-
-        // Call the OpenDoor() function
-        OpenDoor();
     }
 
     /// <summary>
@@ -63,23 +48,17 @@ public class Door : Interactable
     /// </summary>
     public void OpenDoor()
     {
-        // Door should open only when it is not locked
-        // and not already opened.
-        if(!locked && !opened)
+        if (!locked)
         {
-            // Cannot directly modify the transform rotation.
-            // transform.eulerAngles.y += 90f;
-
-            // Create a new Vector3 and store the current rotation.
-            Vector3 newRotation = transform.eulerAngles;
+            // Create a new Vector3 and store the current rotation of the hinge.
+            Vector3 newRotation = doorHinge.eulerAngles;
 
             // Add 90 degrees to the y axis rotation
             newRotation.y += 90f;
 
-            // Assign the new rotation to the transform
-            transform.eulerAngles = newRotation;
+            // Assign the new rotation to the hinge's transform
+            doorHinge.eulerAngles = newRotation;
 
-            // Set the opened bool to true
             opened = true;
         }
     }

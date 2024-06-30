@@ -8,7 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Collectible : Interactable  //everything u type inside the interactable script can use inside this script
+public class RepairItems : Interactable  // Inheriting from Interactable
 {
     /// <summary>
     /// The score value that this collectible is worth.
@@ -16,7 +16,8 @@ public class Collectible : Interactable  //everything u type inside the interact
     public static int myScore = 1;
 
     public Canvas itemImage;
-    private AudioSource audioSource;
+    public AudioSource audioSource;
+    private Player currentPlayer;
 
     /// <summary>
     /// A bool that show the items aquired status
@@ -24,18 +25,16 @@ public class Collectible : Interactable  //everything u type inside the interact
     public static bool hasCrystal = false;
     public static bool hasMaterial = false;
     public static bool hasEngine = false;
-    public static bool hasNote = false;
+    public static bool hasAll = false;
 
     /// <summary>
-    /// Function for sound and UI
+    /// A function that Performs actions related to collection of the collectible
     /// </summary>
     void Start()
     {
         itemImage.gameObject.SetActive(false);
         audioSource = GetComponent<AudioSource>();
-
     }
-
     /// <summary>
     /// Function to perform actions related to collection of the collectible
     /// </summary>
@@ -45,32 +44,31 @@ public class Collectible : Interactable  //everything u type inside the interact
         {
             audioSource.Play();
         }
-        // Activate the corresponding UI image based on the game object's tag
-        if (gameObject.tag == "Crystal")
+
+        // Activate the UI when all items collected.
+        if (gameObject.CompareTag("Crystal"))
         {
             itemImage.gameObject.SetActive(true);
             hasCrystal = true;
+
         }
-        else if (gameObject.tag == "Material")
+        else if (gameObject.CompareTag("Material"))
         {
             itemImage.gameObject.SetActive(true);
             hasMaterial = true;
         }
-        else if (gameObject.tag == "Engine")
+        else if (gameObject.CompareTag("Engine"))
         {
             itemImage.gameObject.SetActive(true);
             hasEngine = true;
         }
-        else if (gameObject.tag == "note")
-        {
-            itemImage.gameObject.SetActive(true);
-            hasNote = true;
-        }
-        // destroy after sound is played
-        StartCoroutine(DestroyAfterSound());
 
-     
-        
+        if (hasCrystal && hasMaterial && hasEngine)
+        {
+            hasAll = true;
+        }
+
+        StartCoroutine(DestroyAfterSound());
     }
     /// <summary>
     /// A function to destroy the object after sound is played.
@@ -79,9 +77,13 @@ public class Collectible : Interactable  //everything u type inside the interact
     private IEnumerator DestroyAfterSound()
     {
         // Wait until the audio clip finishes playing
-        yield return new WaitForSeconds(audioSource.clip.length);
+        if (audioSource != null && audioSource.clip != null)
+        {
+            yield return new WaitForSeconds(audioSource.clip.length);
+        }
         Destroy(gameObject);
     }
+
     /// <summary>
     /// Callback function for when a collision occurs
     /// </summary>
@@ -89,7 +91,7 @@ public class Collectible : Interactable  //everything u type inside the interact
     private void OnCollisionEnter(Collision collision)
     {
         // Check if the object that touched me has a 'Player' tag
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.CompareTag("Player"))
         {
             // Look for player component on object that collided with me
             currentPlayer = collision.gameObject.GetComponent<Player>();
@@ -105,7 +107,7 @@ public class Collectible : Interactable  //everything u type inside the interact
     private void OnCollisionExit(Collision collision)
     {
         // Check if the object that stopped touching me has a 'Player' tag
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.CompareTag("Player"))
         {
             // Remove player component on object that collided with me
             RemovePlayerInteractable(currentPlayer);
@@ -125,4 +127,7 @@ public class Collectible : Interactable  //everything u type inside the interact
         GameManager.Instance.IncreaseScore(myScore);
         Collected();
     }
+
+
 }
+

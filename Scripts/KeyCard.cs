@@ -1,6 +1,6 @@
 /*
- * Author:
- * Date: 06/05/2024
+ * Author: Verlaine Ong Xin Yi
+ * Date: 17/06/2024
  * Description: 
  * The KeyCard will destroy itself after being collided with.
  */
@@ -16,14 +16,22 @@ public class KeyCard : MonoBehaviour
     public Door linkedDoor;
     public Canvas itemImage;
 
+    /// <summary>
+    /// A bool for not having the cards
+    /// </summary>
     public static bool has01 = false;
     public static bool has05 = false;
     public static bool hasCr = false;
     public static bool hasL = false;
-
+    /// <summary>
+    /// A bool for not being in range
+    /// </summary>
     private bool playerInRange = false;
     private GameObject player;
 
+    /// <summary>
+    /// A function to link the door
+    /// </summary>
     private void Start()
     {
         // Check if there is a linked door
@@ -36,7 +44,9 @@ public class KeyCard : MonoBehaviour
         // Disable the UI canvas initially
         itemImage.gameObject.SetActive(false);
     }
-
+    /// <summary>
+    /// A function to collect the key when player input E
+    /// </summary>
     private void Update()
     {
         // Check if the player is in range and presses the "E" key
@@ -45,10 +55,12 @@ public class KeyCard : MonoBehaviour
             CollectKeyCard();
         }
     }
-
+    /// <summary>
+    /// A function to check if  the Player colliding with the keycard
+    /// </summary>
     private void OnCollisionEnter(Collision collision)
     {
-        // Check if it's the Player colliding with the keycard
+        
         if (collision.gameObject.tag == "Player")
         {
             playerInRange = true;
@@ -56,9 +68,12 @@ public class KeyCard : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// A function to check if the Player exit
+    /// </summary>
     private void OnCollisionExit(Collision collision)
     {
-        // Check if it's the Player exiting the collision
+        // Check if the Player exiting the collision
         if (collision.gameObject.tag == "Player")
         {
             playerInRange = false;
@@ -66,6 +81,9 @@ public class KeyCard : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// A function to collect the keys and show the Ui
+    /// </summary>
     private void CollectKeyCard()
     {
         // Tell the door to unlock itself.

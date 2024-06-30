@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 public class RestartMenu : MonoBehaviour
 {
     /// <summary>
-    /// The function to change scene.
+    /// The function to change scene to 2.
     /// </summary>
     public void Restart()
     {

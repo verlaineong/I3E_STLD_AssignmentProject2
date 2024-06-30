@@ -1,5 +1,5 @@
 /*
- * Author: 
+ * Author: Verlaine Ong 
  * Date: 06/05/2024
  * Description: 
  * The door that opens when the player is near it and presses the interact button.
@@ -23,6 +23,10 @@ public class Door : MonoBehaviour
     /// </summary>
     bool locked = false;
 
+    /// <summary>
+    /// collision function
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
         // Check if the object entering the trigger has the "Player" tag
@@ -33,6 +37,11 @@ public class Door : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// exit function
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerExit(Collider other)
     {
         // Check if the object exiting the trigger has the "Player" tag
@@ -50,7 +59,7 @@ public class Door : MonoBehaviour
     {
         if (!locked)
         {
-            // Create a new Vector3 and store the current rotation of the hinge.
+            // store the current rotation of the hinge.
             Vector3 newRotation = doorHinge.eulerAngles;
 
             // Add 90 degrees to the y axis rotation

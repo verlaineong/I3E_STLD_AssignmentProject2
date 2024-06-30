@@ -2,7 +2,7 @@
  * Author: Verlaine Ong
  * Date: 
  * Description: 
- * Contains functions related to the Player such as increasing score.
+ * Contains functions related to the Player.
  */
 using System.Collections;
 using System.Collections.Generic;
@@ -21,11 +21,10 @@ public class Player : MonoBehaviour
     public Canvas Hud;
     public GameObject gameOverPanel;
 
-
     /// <summary>
     /// The current score of the player
     /// </summary>
-    /// int currentScore = 0;
+    private int currentScore = 0;
 
     /// <summary>
     /// The current Interactable of the player
@@ -35,27 +34,35 @@ public class Player : MonoBehaviour
     [SerializeField]
     Transform playerCamera;
 
+    /// <summary>
+    /// float for raycast
+    /// </summary>
+
     [SerializeField]
     float interactionDistance;
 
-
     private Rigidbody rb; // Reference to Rigidbody component
 
-
+    /// <summary>
+    /// a function for health bar
+    /// </summary>
     private void Start()
     {
-       
         gameOverPanel.gameObject.SetActive(false);
         mHealthBar = Hud.transform.Find("HealthBar").GetComponent<HealthBar>();
         mHealthBar.Min = 0;
         mHealthBar.Max = Health;
-        
-        
     }
 
-
+    /// <summary>
+    /// float for initial health 
+    /// </summary>
     public int Health = 100;
 
+    /// <summary>
+    /// function for health decreasing.
+    /// </summary>
+    /// <param name="amount"></param>
     public void TakeDamage(int amount)
     {
         Health -= amount;
@@ -72,10 +79,12 @@ public class Player : MonoBehaviour
         if (Health == 0)
         {
             Die();
-
         }
-
     }
+
+    /// <summary>
+    /// function to load new scene when plaer die.
+    /// </summary>
     public void Die()
     {
         // Rotate the player capsule 90 degrees forward
@@ -84,7 +93,10 @@ public class Player : MonoBehaviour
         // Start the coroutine to wait and load the scene
         StartCoroutine(WaitAndLoadScene());
     }
-
+    /// <summary>
+    /// function to wait 3secs then load new scene.
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator WaitAndLoadScene()
     {
         // Wait for 3 seconds 
@@ -93,6 +105,9 @@ public class Player : MonoBehaviour
         // Load the next scene
         SceneManager.LoadSceneAsync(3);
     }
+    /// <summary>
+    /// function for raycast
+    /// </summary>
 
     private void Update()
     {
@@ -100,31 +115,25 @@ public class Player : MonoBehaviour
         RaycastHit hitInfo;
         if (Physics.Raycast(playerCamera.position, playerCamera.forward, out hitInfo, interactionDistance))
         {
-            ///print out name when ray hit
-            Debug.Log(hitInfo.transform.name);
+            // print out name when ray hit
+           // Debug.Log(hitInfo.transform.name);
         }
     }
 
-
-
-
-
- 
     Door currentDoor;
     Collectible currentCollectible;
-
 
     /// <summary>
     /// Increases the score of the player by <paramref name="scoreToAdd"/>
     /// </summary>
     /// <param name="scoreToAdd">The amount to increase by</param>
-    //public void IncreaseScore(int scoreToAdd)
-    //{
-    //    // Increase the score of the player by scoreToAdd
-    //    currentScore += scoreToAdd;
+    // public void IncreaseScore(int scoreToAdd)
+    // {
+    //     // Increase the score of the player by scoreToAdd
+    //     currentScore += scoreToAdd;
     //
-    //    scoreText.text = "Score: " + currentScore.ToString();
-    //}
+    //     scoreText.text = "Score: " + currentScore.ToString();
+    // }
 
     /// <summary>
     /// Update the player's current Interactable
@@ -134,6 +143,7 @@ public class Player : MonoBehaviour
     {
         currentInteractable = newInteractable;
     }
+
     /// <summary>
     /// remove the player's current Interactable
     /// </summary>
@@ -141,6 +151,7 @@ public class Player : MonoBehaviour
     {
         currentInteractable = null;
     }
+
     /// <summary>
     /// Update the door
     /// </summary>
@@ -148,6 +159,7 @@ public class Player : MonoBehaviour
     {
         currentDoor = newDoor;
     }
+
     /// <summary>
     /// Update the collectible 
     /// </summary>
@@ -175,7 +187,4 @@ public class Player : MonoBehaviour
             currentDoor.OpenDoor();
         }
     }
-
-
-
 }

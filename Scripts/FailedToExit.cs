@@ -20,7 +20,7 @@ public class FailedToExit : MonoBehaviour
         // Check if the object that touched me has a 'Player' tag
         if (collision.gameObject.tag == "Player")
         {
-            SceneManager.LoadSceneAsync(3);
+            SceneManager.LoadSceneAsync(5);
         }
     }
 
